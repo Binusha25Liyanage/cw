@@ -12,6 +12,11 @@ import api from '../api';
 import LoadingSpinner from '../components/LoadingSpinner';
 import ErrorBanner from '../components/ErrorBanner';
 
+const toSafeNumber = (value) => {
+  const parsed = Number(value);
+  return Number.isFinite(parsed) ? parsed : 0;
+};
+
 function EDA() {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -38,7 +43,7 @@ function EDA() {
     if (!data?.smoker_vs_non_smoker_avg_charges) return [];
     return Object.entries(data.smoker_vs_non_smoker_avg_charges).map(([group, value]) => ({
       group,
-      avgCharges: Number(value.toFixed(2))
+      avgCharges: Number(toSafeNumber(value).toFixed(2))
     }));
   }, [data]);
 
@@ -46,11 +51,13 @@ function EDA() {
     if (!data?.charges_by_region) return [];
     return Object.entries(data.charges_by_region).map(([region, value]) => ({
       region,
-      avgCharges: Number(value.toFixed(2))
+      avgCharges: Number(toSafeNumber(value).toFixed(2))
     }));
   }, [data]);
 
-  const corrCols = data?.correlation_matrix ? Object.keys(data.correlation_matrix) : [];
+  const basicStatsEntries = Object.entries(data?.basic_stats || {});
+  const corrMatrix = data?.correlation_matrix || {};
+  const corrCols = Object.keys(corrMatrix);
 
   return (
     <section className="clinical-page">
@@ -77,12 +84,12 @@ function EDA() {
                   </tr>
                 </thead>
                 <tbody>
-                  {Object.entries(data.basic_stats).map(([feature, stats], index) => (
+                  {basicStatsEntries.map(([feature, stats], index) => (
                     <tr key={feature} className={index % 2 === 0 ? 'row-even' : 'row-odd'}>
                       <td>{feature}</td>
-                      <td>{stats.mean.toFixed(2)}</td>
-                      <td>{stats.median.toFixed(2)}</td>
-                      <td>{stats.std.toFixed(2)}</td>
+                      <td>{toSafeNumber(stats?.mean).toFixed(2)}</td>
+                      <td>{toSafeNumber(stats?.median).toFixed(2)}</td>
+                      <td>{toSafeNumber(stats?.std).toFixed(2)}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -137,7 +144,7 @@ function EDA() {
                 <div key={row} className="corr-row-group">
                   <div className="corr-label">{row}</div>
                   {corrCols.map((col) => {
-                    const val = data.correlation_matrix[row][col];
+                    const val = toSafeNumber(corrMatrix?.[row]?.[col]);
                     const alpha = Math.min(1, Math.abs(val));
                     const bg = `rgba(123, 13, 30, ${0.12 + alpha * 0.88})`;
                     return (

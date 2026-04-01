@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import { useEffect, useState } from 'react';
-import { ArrowRightLeft, Binary, BrainCircuit, Database, Microscope } from 'lucide-react';
+import { ArrowRightLeft, Binary, BrainCircuit, Database, FlaskConical, Microscope } from 'lucide-react';
 import api from '../api';
 import LoadingSpinner from '../components/LoadingSpinner';
 import ErrorBanner from '../components/ErrorBanner';
