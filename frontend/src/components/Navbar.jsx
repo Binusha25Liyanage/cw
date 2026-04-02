@@ -1,5 +1,5 @@
 import { Bell, ChartColumnBig, ChartSpline, FlaskConical, LayoutDashboard, Settings, UserRound, WandSparkles } from 'lucide-react';
-import { NavLink, useLocation } from 'react-router-dom';
+import { NavLink, useLocation, useNavigate } from 'react-router-dom';
 
 const navItems = [
   { path: '/', label: 'DASHBOARD', topLabel: 'Dashboard', icon: LayoutDashboard },
@@ -11,6 +11,7 @@ const navItems = [
 
 function Navbar() {
   const location = useLocation();
+  const navigate = useNavigate();
   const active = navItems.find((item) => item.path === location.pathname) || navItems[0];
 
   return (
@@ -39,7 +40,7 @@ function Navbar() {
         </nav>
 
         <div className="sidebar-bottom">
-          <button type="button" className="new-analysis-btn">+ New Analysis</button>
+          <button type="button" className="new-analysis-btn" onClick={() => navigate('/predict')}>+ New Analysis</button>
           <a className="sidebar-meta-link" href="#support">
             <Bell size={15} />
             SUPPORT
